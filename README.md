@@ -73,3 +73,6 @@ Este conjunto de dados contém 2.126 registros de características extraídas de
 3.  Vinicius de Souza Medeiros -
 4.  Horacy Lopes da Silva Junior - RM365525
 5.  Gabriel Luiz Santana -
+
+## Colab:
+- https://colab.research.google.com/drive/1JLN_Sv9WemCL6qgVAOtmmCNbVU9TUTnk?usp=sharing
