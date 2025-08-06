@@ -55,10 +55,21 @@ Este conjunto de dados contém 2.126 registros de características extraídas de
 - **Random Forest**
 - **KNN**
 
+## Como executar
+
+1. Crie o ambiente virtual: ``python -m venv venv``
+2. Ative o ambiente vitual: ``venv/Scripts/activate`` após rodar o comando será possivel ver (venv) na linha de comando terminal.
+3. Instale as dependencias: ``pip install -r requirements.txt``
+4. Rode o código: ``python tech_challeng_classificao_saude_fetal.py``
+
+## Usando o Docker
+1. Construa a imagem Docker: ``docker build -t fetal-health-app .``
+2. Rode o container: ``docker run --rm fetal-health-app``
+
 ## Grupo:
 
 1.  Bruna Cardoso Andrade - RM366295
-2.  Felipe de Siqueira Zanella -
+2.  Felipe de Siqueira Zanella - RM365834
 3.  Vinicius de Souza Medeiros -
 4.  Horacy Lopes da Silva Junior - RM365525
 5.  Gabriel Luiz Santana -
