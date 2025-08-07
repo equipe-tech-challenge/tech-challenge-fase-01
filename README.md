@@ -4,6 +4,10 @@ Este projeto tem como objetivo desenvolver um modelo de Machine Learning para cl
 
 Link do dataset: https://www.kaggle.com/datasets/andrewmvd/fetal-health-classification
 
+### Video de Apresentação
+
+- https://www.youtube.com/watch?v=xmjbt7voSoE 
+
 ## Dados
 
 Este conjunto de dados contém 2.126 registros de características extraídas de exames de cardiotocograma, que foram então classificados por três obstetras especialistas em três categorias:
