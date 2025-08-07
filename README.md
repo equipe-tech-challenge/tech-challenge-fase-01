@@ -74,9 +74,9 @@ Este conjunto de dados contém 2.126 registros de características extraídas de
 
 1.  Bruna Cardoso Andrade - RM366295
 2.  Felipe de Siqueira Zanella - RM365834
-3.  Vinicius de Souza Medeiros -
+3.  Vinicius de Souza Medeiros - RM366459
 4.  Horacy Lopes da Silva Junior - RM365525
-5.  Gabriel Luiz Santana -
+5.  Gabriel Luiz Santana - RM366287
 
 ## Colab:
 - https://colab.research.google.com/drive/1JLN_Sv9WemCL6qgVAOtmmCNbVU9TUTnk?usp=sharing
