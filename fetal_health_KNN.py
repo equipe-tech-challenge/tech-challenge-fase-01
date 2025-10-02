@@ -59,9 +59,6 @@ class FetalHealthKNN:
         arquivo_teste = 'fetal_health_teste.csv'
 
         if not os.path.exists(arquivo_treino) or not os.path.exists(arquivo_teste):
-            print("Arquivos processados não encontrados. Executando preprocessamento...")
-
-
             preprocessador = verificar_e_processar_dados.PreprocessadorDados()
             preprocessador.executar_preprocessamento()
 
@@ -75,10 +72,6 @@ class FetalHealthKNN:
         teste = pd.read_csv(arquivo_teste)
         self.X_teste = teste.drop('target', axis=1)
         self.y_teste = teste['target']
-
-        print(f"Dados carregados:")
-        print(f"  Treino (com SMOTE): {self.X_treino.shape}")
-        print(f"  Teste (original): {self.X_teste.shape}")
 
     def criar_modelo(self):
         self.modelo = KNeighborsClassifier(
@@ -168,27 +161,7 @@ class FetalHealthKNN:
         """
         resultados = self.executar_pipeline_completo()
 
-        print("=" * 60)
-        print("RESULTADOS DO MODELO KNN - SAÚDE FETAL")
-        print("=" * 60)
-        print(f"\nParâmetros do Modelo:")
-        print(f"  • Número de vizinhos: {self.n_vizinhos}")
-        print(f"  • Métrica de distância: {self.metrica}")
-        print(f"  • Tipo de peso: {self.peso}")
-
-        print(f"\nMétricas de Desempenho:")
-        print(f"  • Acurácia: {resultados['metricas']['acuracia']:.4f}")
-        print(f"  • Recall (macro): {resultados['metricas']['recall']:.4f}")
-        print(f"  • F1-Score (macro): {resultados['metricas']['f1_score']:.4f}")
-
-        print(f"\nFitness (para AG): {resultados['fitness']:.4f}")
-
-        print("\nMatriz de Confusão:")
-        print(resultados['matriz_confusao'])
-
-        print("\nRelatório de Classificação:")
-        print(resultados['relatorio_classificacao'])
-        print("=" * 60)
+        print(f"Acurácia: {resultados['metricas']['acuracia']:.4f}, Recall: {resultados['metricas']['recall']:.4f}, F1-Score: {resultados['metricas']['f1_score']:.4f}")
 
         return resultados
 
@@ -206,24 +179,14 @@ class FetalHealthKNN:
 
 
 if __name__ == "__main__":
-    print("Exemplo de execução do modelo KNN para Saúde Fetal\n")
-
     modelo_knn = FetalHealthKNN(n_vizinhos=3, metrica='minkowski', peso='uniform')
     modelo_knn.exibir_resultados()
 
-    print("\n" + "=" * 60)
-    print("Exemplo para Algoritmo Genético")
-    print("=" * 60)
-
     configuracoes = [
-        {'n_vizinhos': 3, 'metrica': 'euclidean', 'peso': 'uniform'},
-        {'n_vizinhos': 5, 'metrica': 'manhattan', 'peso': 'distance'},
-        {'n_vizinhos': 7, 'metrica': 'minkowski', 'peso': 'distance'},
+        {'n_vizinhos': 4, 'metrica': 'manhattan', 'peso': 'distance'},
     ]
 
     for i, config in enumerate(configuracoes, 1):
-        print(f"\nConfiguração {i}: {config}")
         modelo = FetalHealthKNN(**config)
         modelo.treinar_modelo()
         fitness = modelo.calcular_fitness()
-        print(f"  Fitness (Acurácia): {fitness:.4f}")
