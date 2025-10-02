@@ -1,0 +1,229 @@
+"""
+Módulo responsável pela classificação de saúde fetal usando KNN.
+Preparado para integração com algoritmo genético.
+Usa arquivos separados de treino (com SMOTE) e teste conforme arquivo original.
+Os dados já vêm normalizados (StandardScaler aplicado no preprocessamento).
+"""
+
+import pandas as pd
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, recall_score, f1_score, confusion_matrix, classification_report
+import os
+from preprocessamento_dados import verificar_e_processar_dados
+
+class FetalHealthKNN:
+    """
+    Classe para classificação de saúde fetal usando algoritmo KNN.
+    Otimizada para uso com algoritmo genético.
+    """
+
+    def __init__(self, n_vizinhos=3, metrica='euclidean', peso='uniform'):
+        """
+        Summary:
+            Inicializa o classificador KNN com parâmetros personalizados.
+
+        Args:
+            n_vizinhos: Número de vizinhos para o KNN (padrão: 3, conforme arquivo original)
+            metrica: Métrica de distância ('euclidean', 'manhattan', 'minkowski')
+            peso: Tipo de peso ('uniform', 'distance')
+        """
+        self.n_vizinhos = n_vizinhos
+        self.metrica = metrica
+        self.peso = peso
+
+        self.modelo = None
+        self.X_treino = None
+        self.X_teste = None
+        self.y_treino = None
+        self.y_teste = None
+        self.y_predicao = None
+        self.metricas_desempenho = {}
+
+        self._verificar_e_carregar_dados()
+
+    def _verificar_e_carregar_dados(self):
+        """
+        Summary:
+            Verifica arquivos processados e carrega os dados.
+        """
+        verificar_e_processar_dados()
+        self._carregar_dados()
+
+    def _carregar_dados(self):
+        """
+        Summary:
+            Carrega dados de treino (com SMOTE) e teste de arquivos separados.
+            Se os arquivos não existirem, executa o preprocessamento automaticamente.
+        """
+        arquivo_treino = 'fetal_health_treino_smote.csv'
+        arquivo_teste = 'fetal_health_teste.csv'
+
+        if not os.path.exists(arquivo_treino) or not os.path.exists(arquivo_teste):
+            print("Arquivos processados não encontrados. Executando preprocessamento...")
+
+
+            preprocessador = verificar_e_processar_dados.PreprocessadorDados()
+            preprocessador.executar_preprocessamento()
+
+            if not os.path.exists(arquivo_treino) or not os.path.exists(arquivo_teste):
+                raise FileNotFoundError("Erro ao gerar arquivos processados")
+
+        treino = pd.read_csv(arquivo_treino)
+        self.X_treino = treino.drop('target', axis=1)
+        self.y_treino = treino['target']
+
+        teste = pd.read_csv(arquivo_teste)
+        self.X_teste = teste.drop('target', axis=1)
+        self.y_teste = teste['target']
+
+        print(f"Dados carregados:")
+        print(f"  Treino (com SMOTE): {self.X_treino.shape}")
+        print(f"  Teste (original): {self.X_teste.shape}")
+
+    def criar_modelo(self):
+        self.modelo = KNeighborsClassifier(
+            n_neighbors=self.n_vizinhos,
+            metric=self.metrica,
+            weights=self.peso
+        )
+        return self.modelo
+
+    def treinar_modelo(self):
+        if self.modelo is None:
+            self.criar_modelo()
+
+        self.modelo.fit(self.X_treino, self.y_treino)
+        return self.modelo
+
+    def realizar_predicao(self):
+        if self.modelo is None:
+            raise ValueError("Modelo não foi treinado. Execute treinar_modelo() primeiro.")
+
+        self.y_predicao = self.modelo.predict(self.X_teste)
+        return self.y_predicao
+
+    def calcular_metricas(self):
+        if self.y_predicao is None:
+            self.realizar_predicao()
+
+        self.metricas_desempenho = {
+            'acuracia': accuracy_score(self.y_teste, self.y_predicao),
+            'recall': recall_score(self.y_teste, self.y_predicao, average='macro'),
+            'f1_score': f1_score(self.y_teste, self.y_predicao, average='macro')
+        }
+
+        return self.metricas_desempenho
+
+    def obter_matriz_confusao(self):
+        if self.y_predicao is None:
+            self.realizar_predicao()
+
+        return confusion_matrix(self.y_teste, self.y_predicao)
+
+    def obter_relatorio_classificacao(self):
+        if self.y_predicao is None:
+            self.realizar_predicao()
+
+        return classification_report(self.y_teste, self.y_predicao)
+
+    def calcular_fitness(self):
+        metricas = self.calcular_metricas()
+        return metricas['acuracia']
+
+    def calcular_fitness_ponderado(self, peso_acuracia=0.5, peso_f1=0.3, peso_recall=0.2):
+        metricas = self.calcular_metricas()
+
+        fitness_ponderado = (
+            metricas['acuracia'] * peso_acuracia +
+            metricas['f1_score'] * peso_f1 +
+            metricas['recall'] * peso_recall
+        )
+
+        return fitness_ponderado
+
+    def executar_pipeline_completo(self):
+        self.treinar_modelo()
+        self.realizar_predicao()
+
+        metricas = self.calcular_metricas()
+        matriz = self.obter_matriz_confusao()
+        relatorio = self.obter_relatorio_classificacao()
+
+        return {
+            'metricas': metricas,
+            'matriz_confusao': matriz,
+            'relatorio_classificacao': relatorio,
+            'fitness': self.calcular_fitness(),
+            'parametros': {
+                'n_vizinhos': self.n_vizinhos,
+                'metrica': self.metrica,
+                'peso': self.peso
+            }
+        }
+
+    def exibir_resultados(self):
+        """
+        Summary:
+            Exibe os resultados do modelo de forma formatada.
+        """
+        resultados = self.executar_pipeline_completo()
+
+        print("=" * 60)
+        print("RESULTADOS DO MODELO KNN - SAÚDE FETAL")
+        print("=" * 60)
+        print(f"\nParâmetros do Modelo:")
+        print(f"  • Número de vizinhos: {self.n_vizinhos}")
+        print(f"  • Métrica de distância: {self.metrica}")
+        print(f"  • Tipo de peso: {self.peso}")
+
+        print(f"\nMétricas de Desempenho:")
+        print(f"  • Acurácia: {resultados['metricas']['acuracia']:.4f}")
+        print(f"  • Recall (macro): {resultados['metricas']['recall']:.4f}")
+        print(f"  • F1-Score (macro): {resultados['metricas']['f1_score']:.4f}")
+
+        print(f"\nFitness (para AG): {resultados['fitness']:.4f}")
+
+        print("\nMatriz de Confusão:")
+        print(resultados['matriz_confusao'])
+
+        print("\nRelatório de Classificação:")
+        print(resultados['relatorio_classificacao'])
+        print("=" * 60)
+
+        return resultados
+
+    def atualizar_parametros(self, n_vizinhos=None, metrica=None, peso=None):
+        if n_vizinhos is not None:
+            self.n_vizinhos = n_vizinhos
+
+        if metrica is not None:
+            self.metrica = metrica
+
+        if peso is not None:
+            self.peso = peso
+
+        self.criar_modelo()
+
+
+if __name__ == "__main__":
+    print("Exemplo de execução do modelo KNN para Saúde Fetal\n")
+
+    modelo_knn = FetalHealthKNN(n_vizinhos=3, metrica='minkowski', peso='uniform')
+    modelo_knn.exibir_resultados()
+
+    print("\n" + "=" * 60)
+    print("Exemplo para Algoritmo Genético")
+    print("=" * 60)
+
+    configuracoes = [
+        {'n_vizinhos': 3, 'metrica': 'euclidean', 'peso': 'uniform'},
+        {'n_vizinhos': 5, 'metrica': 'manhattan', 'peso': 'distance'},
+        {'n_vizinhos': 7, 'metrica': 'minkowski', 'peso': 'distance'},
+    ]
+
+    for i, config in enumerate(configuracoes, 1):
+        print(f"\nConfiguração {i}: {config}")
+        modelo = FetalHealthKNN(**config)
+        modelo.treinar_modelo()
+        fitness = modelo.calcular_fitness()
+        print(f"  Fitness (Acurácia): {fitness:.4f}")
