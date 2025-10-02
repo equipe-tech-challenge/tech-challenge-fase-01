@@ -5,7 +5,7 @@ from fetal_health_KNN import FetalHealthKNN
 
 class AlgoritmoGenetico:
     def __init__(self, tamanho_populacao=20, taxa_mutacao=0.1, taxa_crossover=0.8,
-                 geracoes=50, elitismo=2):
+                 geracoes=500, elitismo=2):
         self.tamanho_populacao = tamanho_populacao
         self.taxa_mutacao = taxa_mutacao
         self.taxa_crossover = taxa_crossover
@@ -102,9 +102,9 @@ class AlgoritmoGenetico:
                 'melhor_individuo': fitness_scores[0][0]
             })
 
-            print(f"Geração {geracao + 1}/{self.geracoes} - "
+            print(f"GeraÃ§Ã£o {geracao + 1}/{self.geracoes} - "
                   f"Melhor Fitness: {fitness_scores[0][1]:.4f} - "
-                  f"Fitness Médio: {self.historico_fitness[-1]['fitness_medio']:.4f}")
+                  f"Fitness MÃ©dio: {self.historico_fitness[-1]['fitness_medio']:.4f}")
 
             nova_populacao = []
 
@@ -130,18 +130,18 @@ class AlgoritmoGenetico:
 
     def exibir_resultados(self):
         print("\n" + "=" * 60)
-        print("RESULTADOS DO ALGORITMO GENÉTICO")
+        print("RESULTADOS DO ALGORITMO GENÃ‰TICO")
         print("=" * 60)
-        print(f"\nMelhor Indivíduo Encontrado:")
-        print(f"  " Número de vizinhos: {self.melhor_individuo['n_vizinhos']}")
-        print(f"  " Métrica: {self.melhor_individuo['metrica']}")
-        print(f"  " Peso: {self.melhor_individuo['peso']}")
-        print(f"\nMelhor Fitness (Acurácia): {self.melhor_fitness:.4f}")
+        print(f"\nMelhor IndivÃ­duo Encontrado:")
+        print(f"  NÃºmero de vizinhos: {self.melhor_individuo['n_vizinhos']}")
+        print(f"  MÃ©trica: {self.melhor_individuo['metrica']}")
+        print(f"  Peso: {self.melhor_individuo['peso']}")
+        print(f"\nMelhor Fitness (AcurÃ¡cia): {self.melhor_fitness:.4f}")
         print("=" * 60)
 
 
 if __name__ == "__main__":
-    print("Executando Algoritmo Genético para Otimização de Parâmetros KNN\n")
+    print("Executando Algoritmo GenÃ©tico para OtimizaÃ§Ã£o de ParÃ¢metros KNN\n")
 
     ag = AlgoritmoGenetico(
         tamanho_populacao=10,

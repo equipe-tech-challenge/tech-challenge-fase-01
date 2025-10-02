@@ -135,7 +135,6 @@ def verificar_e_processar_dados():
     ]
 
     if all(os.path.exists(arq) for arq in arquivos_necessarios):
-        print("Arquivos processados encontrados. Pulando pré-processamento.")
         return True
 
     print("Arquivos processados não encontrados. Executando pré-processamento...")

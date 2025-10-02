@@ -1,10 +1,3 @@
-"""
-Módulo responsável pela classificação de saúde fetal usando KNN.
-Preparado para integração com algoritmo genético.
-Usa arquivos separados de treino (com SMOTE) e teste conforme arquivo original.
-Os dados já vêm normalizados (StandardScaler aplicado no preprocessamento).
-"""
-
 import pandas as pd
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, recall_score, f1_score, confusion_matrix, classification_report
@@ -12,21 +5,7 @@ import os
 from preprocessamento_dados import verificar_e_processar_dados
 
 class FetalHealthKNN:
-    """
-    Classe para classificação de saúde fetal usando algoritmo KNN.
-    Otimizada para uso com algoritmo genético.
-    """
-
     def __init__(self, n_vizinhos=3, metrica='euclidean', peso='uniform'):
-        """
-        Summary:
-            Inicializa o classificador KNN com parâmetros personalizados.
-
-        Args:
-            n_vizinhos: Número de vizinhos para o KNN (padrão: 3, conforme arquivo original)
-            metrica: Métrica de distância ('euclidean', 'manhattan', 'minkowski')
-            peso: Tipo de peso ('uniform', 'distance')
-        """
         self.n_vizinhos = n_vizinhos
         self.metrica = metrica
         self.peso = peso
@@ -42,19 +21,10 @@ class FetalHealthKNN:
         self._verificar_e_carregar_dados()
 
     def _verificar_e_carregar_dados(self):
-        """
-        Summary:
-            Verifica arquivos processados e carrega os dados.
-        """
         verificar_e_processar_dados()
         self._carregar_dados()
 
     def _carregar_dados(self):
-        """
-        Summary:
-            Carrega dados de treino (com SMOTE) e teste de arquivos separados.
-            Se os arquivos não existirem, executa o preprocessamento automaticamente.
-        """
         arquivo_treino = 'fetal_health_treino_smote.csv'
         arquivo_teste = 'fetal_health_teste.csv'
 
