@@ -89,20 +89,25 @@ class FetalHealthKNN:
 
         return classification_report(self.y_teste, self.y_predicao)
 
-    def calcular_fitness(self):
-        metricas = self.calcular_metricas()
-        return metricas['acuracia']
+    def calcular_fitness(self, peso_acuracia=0.5, peso_f1=0.3, peso_recall=0.2, penalizar_complexidade=True):
+        if not self.metricas_desempenho:
+            self.calcular_metricas()
 
-    def calcular_fitness_ponderado(self, peso_acuracia=0.5, peso_f1=0.3, peso_recall=0.2):
-        metricas = self.calcular_metricas()
-
-        fitness_ponderado = (
-            metricas['acuracia'] * peso_acuracia +
-            metricas['f1_score'] * peso_f1 +
-            metricas['recall'] * peso_recall
+        fitness = (
+            self.metricas_desempenho['acuracia'] * peso_acuracia +
+            self.metricas_desempenho['f1_score'] * peso_f1 +
+            self.metricas_desempenho['recall'] * peso_recall
         )
 
-        return fitness_ponderado
+        # Penaliza modelos com muitos vizinhos (0-5% de redução)
+        if penalizar_complexidade:
+            penalidade = (self.n_vizinhos - 1) / 200  # máx 9.5% para k=20
+            fitness *= (1 - penalidade)
+
+        return fitness
+
+    def calcular_fitness_ponderado(self, peso_acuracia=0.5, peso_f1=0.3, peso_recall=0.2):
+        return self.calcular_fitness(peso_acuracia, peso_f1, peso_recall, penalizar_complexidade=False)
 
     def executar_pipeline_completo(self):
         self.treinar_modelo()

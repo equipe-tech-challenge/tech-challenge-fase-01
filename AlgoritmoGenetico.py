@@ -4,7 +4,7 @@ from fetal_health_KNN import FetalHealthKNN
 
 
 class AlgoritmoGenetico:
-    def __init__(self, tamanho_populacao=20, taxa_mutacao=0.1, taxa_crossover=0.8,
+    def __init__(self, tamanho_populacao=100, taxa_mutacao=0.7, taxa_crossover=0.8,
                  geracoes=500, elitismo=2):
         self.tamanho_populacao = tamanho_populacao
         self.taxa_mutacao = taxa_mutacao
@@ -40,7 +40,7 @@ class AlgoritmoGenetico:
             peso=individuo['peso']
         )
         modelo.treinar_modelo()
-        return modelo.calcular_fitness()
+        return modelo.calcular_fitness(penalizar_complexidade=True)
 
     def avaliar_populacao(self):
         fitness_scores = []
@@ -79,15 +79,14 @@ class AlgoritmoGenetico:
         return filho1, filho2
 
     def mutacao(self, individuo):
-        if random.random() < self.taxa_mutacao:
-            gene_mutado = random.choice(list(individuo.keys()))
-
-            if gene_mutado == 'n_vizinhos':
-                individuo[gene_mutado] = random.randint(*self.ranges['n_vizinhos'])
-            else:
-                individuo[gene_mutado] = random.choice(self.ranges[gene_mutado])
-
-        return individuo
+        individuo_mutado = individuo.copy()
+        for gene in individuo_mutado.keys():
+            if random.random() < self.taxa_mutacao: 
+                if gene == 'n_vizinhos':
+                    individuo_mutado[gene] = random.randint(*self.ranges['n_vizinhos'])
+                else:
+                    individuo_mutado[gene] = random.choice(self.ranges[gene])
+        return individuo_mutado
 
     def evoluir(self):
         self.inicializar_populacao()
@@ -144,10 +143,10 @@ if __name__ == "__main__":
     print("Executando Algoritmo Genético para Otimização de Parâmetros KNN\n")
 
     ag = AlgoritmoGenetico(
-        tamanho_populacao=10,
-        taxa_mutacao=0.2,
+        tamanho_populacao=20,
+        taxa_mutacao=0.5,
         taxa_crossover=0.8,
-        geracoes=10,
+        geracoes=50,
         elitismo=2
     )
 
